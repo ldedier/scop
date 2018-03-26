@@ -6,7 +6,7 @@
 /*   By: ldedier <ldedier@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/25 18:53:22 by ldedier           #+#    #+#             */
-/*   Updated: 2018/03/26 21:32:33 by ldedier          ###   ########.fr       */
+/*   Updated: 2018/03/26 21:56:57 by ldedier          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,10 +60,7 @@ int		main(int argc, char **argv)
 		SDL_DestroyWindow(fenetre);
 		return -1;
 	}
-	char *str = (char *)glGetString(GL_SHADING_LANGUAGE_VERSION);
-	ft_printf("GLSL Version: %s\n", str);
 
-	
 	t_shader *shader = shd_new_shader("Shaders/basique2D.vert", "Shaders/basique2D.frag");
 	if (!shd_charge(shader))
 		ft_printf("pas bon\n");
@@ -71,7 +68,7 @@ int		main(int argc, char **argv)
 		ft_printf("content!\n");
 
 
-	float vertices[] = {-0.5, -0.5,0.0,   0.0, 0.5,0.0,   0.5, -0.5,0.0};
+	float vertices[] = {-0.5, -0.5,   0.0, 0.5,   0.5, -0.5};
 	float colors[] = {
 		1.0, 0.0, 0.0,
 		0.0, 1.0, 0.0,
@@ -81,26 +78,24 @@ int		main(int argc, char **argv)
 	GLuint vao = 0;
 	glGenVertexArrays(1, &vao);
 	glBindVertexArray(vao);
-	glEnableVertexAttribArray(0);
+	
 
 	GLuint vbo[2];
 	GLint location;
-
 	glGenBuffers(2, vbo);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
-	glBufferData(GL_ARRAY_BUFFER, 9 * sizeof(float), vertices, GL_STATIC_DRAW);
-	location = glGetAttribLocation(shader->m_program_id, "in_Vertex");
-	ft_printf("location vertices: %d\n", location);
-	glVertexAttribPointer(location, 3, GL_FLOAT, GL_FALSE, 0, NULL);
 	
+	
+	glEnableVertexAttribArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
+	glBufferData(GL_ARRAY_BUFFER, 6 * sizeof(float), vertices, GL_STATIC_DRAW);
+	location = glGetAttribLocation(shader->m_program_id, "in_Vertex");
+	glVertexAttribPointer(location, 2, GL_FLOAT, GL_FALSE, 0, NULL);	
+
+	glEnableVertexAttribArray(1);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
 	glBufferData(GL_ARRAY_BUFFER, 9 * sizeof(float), colors, GL_STATIC_DRAW);
 	location = glGetAttribLocation(shader->m_program_id, "in_Colors");
-	ft_printf("location colors: %d\n", location);
 	glVertexAttribPointer(location, 3, GL_FLOAT, GL_FALSE, 0, NULL);
-
-
-	
 
 	glUseProgram(shader->m_program_id);
 	while (!terminer)
