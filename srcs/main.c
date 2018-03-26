@@ -6,16 +6,51 @@
 /*   By: ldedier <ldedier@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/25 18:53:22 by ldedier           #+#    #+#             */
-/*   Updated: 2018/03/26 21:56:57 by ldedier          ###   ########.fr       */
+/*   Updated: 2018/03/27 01:31:41 by ldedier          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/scop.h"
 
+void	ft_events(t_env *e, SDL_Event event)
+{
+	if (event.key.keysym.sym == SDLK_UP)
+	{
+		e->translate.y += 0.1;
+	}
+	else if (event.key.keysym.sym == SDLK_DOWN)
+	{
+		e->translate.y -= 0.1;
+	}
+	else if (event.key.keysym.sym == SDLK_RIGHT)
+	{
+		e->translate.x += 0.1;
+	}
+	else if (event.key.keysym.sym == SDLK_LEFT)
+	{
+		e->translate.x -= 0.1;
+	}
+
+	else if (event.key.keysym.sym == SDLK_p)
+	{
+		e->enhance.x += 0.1;
+		e->enhance.y += 0.1;
+	}
+	else if (event.key.keysym.sym == SDLK_o)
+	{
+		e->enhance.x -= 0.1;
+		e->enhance.y -= 0.1;
+	}
+}
+
 int		main(int argc, char **argv)
 {
 	(void) argc;
 	(void) argv;
+	t_env e;
+
+	e.translate = ft_new_vec3(0,0,0);
+	e.enhance = ft_new_vec3(1,1,1);
 
 	SDL_Window* fenetre = NULL;
 	SDL_GLContext contexteOpenGL = NULL;
@@ -46,7 +81,7 @@ int		main(int argc, char **argv)
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
 
 	fenetre = SDL_CreateWindow("Test SDL 2.0", SDL_WINDOWPOS_CENTERED,
-			SDL_WINDOWPOS_CENTERED, 800, 600, SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL);
+			SDL_WINDOWPOS_CENTERED, 1200, 800, SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL);
 
 	if (fenetre == 0)
 	{
@@ -68,7 +103,7 @@ int		main(int argc, char **argv)
 		ft_printf("content!\n");
 
 
-	float vertices[] = {-0.5, -0.5,   0.0, 0.5,   0.5, -0.5};
+	float vertices[] = {-0.5, -0.5,   0.0, 0.5, 0.5, -0.5};
 	float colors[] = {
 		1.0, 0.0, 0.0,
 		0.0, 1.0, 0.0,
@@ -97,14 +132,32 @@ int		main(int argc, char **argv)
 	location = glGetAttribLocation(shader->m_program_id, "in_Colors");
 	glVertexAttribPointer(location, 3, GL_FLOAT, GL_FALSE, 0, NULL);
 
+
+	t_mat4 translate_mat = ft_translate_mat(e.translate);
+	t_mat4 enhance_mat = ft_enhance_mat(e.enhance);
+
 	glUseProgram(shader->m_program_id);
+	
+	GLint loc_tr = glGetUniformLocation(shader->m_program_id, "Translate_mat");
+	if (loc_tr != -1)
+		glUniformMatrix4fv(loc_tr, 1, GL_FALSE, translate_mat);
+	GLint loc_enhance = glGetUniformLocation(shader->m_program_id, "Enhance_mat");
+	if (loc_enhance != -1)
+		glUniformMatrix4fv(loc_enhance, 1, GL_FALSE, enhance_mat);
 	while (!terminer)
 	{
-		SDL_WaitEvent(&evenements);
-		if (evenements.window.event == SDL_WINDOWEVENT_CLOSE || evenements.key.keysym.sym == SDLK_ESCAPE)
-			terminer = 1;
+		while (SDL_PollEvent(&evenements)) {
+			ft_events(&e, evenements);
+			translate_mat = ft_translate_mat(e.translate);
+			enhance_mat = ft_enhance_mat(e.enhance);
+			
+			glUniformMatrix4fv(loc_tr, 1, GL_FALSE, translate_mat);
+			glUniformMatrix4fv(loc_enhance, 1, GL_FALSE, enhance_mat);
+			if (evenements.window.event == SDL_WINDOWEVENT_CLOSE || evenements.key.keysym.sym == SDLK_ESCAPE)
+				terminer = 1;
+		}
 		glClear(GL_COLOR_BUFFER_BIT);
-    	glDrawArrays(GL_TRIANGLES, 0, 3);
+   	 	glDrawArrays(GL_TRIANGLES, 0, 3);
 		SDL_GL_SwapWindow(fenetre);
 	}
 	glUseProgram(0);

@@ -8,6 +8,9 @@
 in vec2 in_Vertex;
 in vec3 in_Colors;
 
+uniform mat4 Translate_mat;
+uniform mat4 Enhance_mat;
+
 out vec3 v_Colors;
 
 // Fonction main
@@ -16,6 +19,6 @@ void main()
 {
     // Position finale du vertex
 
-    gl_Position = vec4(in_Vertex,0.0, 1.0);
+    gl_Position = Translate_mat * Enhance_mat * vec4(in_Vertex,0.0, 1.0);
 	v_Colors = in_Colors;
 }

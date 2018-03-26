@@ -6,7 +6,7 @@
 #    By: ldedier <ldedier@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/11/06 18:20:16 by ldedier           #+#    #+#              #
-#    Updated: 2018/03/26 16:52:18 by ldedier          ###   ########.fr        #
+#    Updated: 2018/03/27 00:57:30 by ldedier          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -27,9 +27,13 @@ OBJDIR   = objs
 BINDIR   = .
 INCLUDESDIR = includes
 
+#MLXDIR = minilibx_macos
+
 LIBFTDIR = libft
-MLXDIR = minilibx_macos
 LIBFT_INCLUDEDIR = includes
+
+LIBMATDIR = libmat
+LIBMAT_INCLUDEDIR = includes
 
 OK_COLOR = \x1b[32;01m
 EOC = \033[0m
@@ -43,7 +47,7 @@ SOURCES = $(addprefix $(SRCDIR)/, $(SRCS_NO_PREFIX))
 OBJECTS = $(addprefix $(OBJDIR)/, $(SRCS_NO_PREFIX:%.c=%.o))
 
 INCLUDES = $(addprefix $(INCLUDESDIR)/, $(INCLUDES_NO_PREFIX))
-INC = -I $(INCLUDESDIR) -I $(LIBFTDIR)/$(LIBFT_INCLUDEDIR)
+INC = -I $(INCLUDESDIR) -I $(LIBFTDIR)/$(LIBFT_INCLUDEDIR) -I $(LIBMATDIR)/$(LIBMAT_INCLUDEDIR) 
 
 CFLAGS = -DPATH=$(PWD) -Wall -Wextra -Werror $(INC)
 
@@ -65,8 +69,9 @@ debug:
 
 $(BINDIR)/$(NAME): $(OBJECTS)
 	@make -C $(LIBFTDIR)
+	@make -C $(LIBMATDIR)
 	@$(CC) -o $@ $^ -F ./frameworks -framework SDL2\
-		-framework SDL2_image -framework SDL2_mixer -framework SDL2_ttf -framework OpenGL -framework Appkit -L $(LIBFTDIR) -lft
+		-framework SDL2_image -framework SDL2_mixer -framework SDL2_ttf -framework OpenGL -framework Appkit -L $(LIBFTDIR) -lft -L $(LIBMATDIR) -lmat
 	@echo "$(OK_COLOR)$(NAME) linked with success !$(EOC)"
 	@install_name_tool -change @rpath/SDL2.framework/Versions/A/SDL2 $(SDL2) $(NAME)
 	@install_name_tool -change @rpath/SDL2_image.framework/Versions/A/SDL2_image $(SDL2_image) $(NAME)
@@ -78,10 +83,12 @@ $(OBJDIR)/%.o : $(SRCDIR)/%.c $(INCLUDES)
 
 clean:
 	@make clean -C $(LIBFTDIR)
+	@make clean -C $(LIBMATDIR)
 	@rm -f $(OBJECTS)
 
 fclean: clean
 	@make fclean -C $(LIBFTDIR)
+	@make fclean -C $(LIBMATDIR)
 	@rm -f $(BINDIR)/$(NAME)
 
 re: fclean all

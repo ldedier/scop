@@ -6,7 +6,7 @@
 /*   By: ldedier <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/25 18:54:52 by ldedier           #+#    #+#             */
-/*   Updated: 2018/03/26 14:54:04 by ldedier          ###   ########.fr       */
+/*   Updated: 2018/03/27 01:01:19 by ldedier          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@
 //# include "mlx_opengl.h"
 //# include "mlx_new_window.h"
 # include "libft.h"
+# include "libmat.h"
 
 typedef struct	s_shader
 {
@@ -34,6 +35,13 @@ typedef struct	s_shader
 	char		*m_vertex_source;
 	char		*m_fragment_source;
 }				t_shader;
+
+typedef struct	s_env
+{
+	t_vec3		translate;
+	t_vec3		rotate;
+	t_vec3		enhance;
+}				t_env;
 
 t_shader		*shd_new_shader(char *vertex_source, char *fragment_source);
 int				shd_charge(t_shader *shader);
