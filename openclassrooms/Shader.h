@@ -7,7 +7,6 @@
 #ifdef WIN32
 #include <GL/glew.h>
 
-
 // Include Mac
 
 #elif __APPLE__
@@ -45,6 +44,6 @@ t_shader		*shd_copy(t_shader *shader);
 t_shader		*shd_shader_params(char *vertex_source, char *fragment_source);
 int				shd_charge(t_shader *shader);
 int				shd_compile(t_shader *shader);
-Gluint			shd_getProgramID(t_shader *shader);
+GLuint			shd_getProgramID(t_shader *shader);
 
 #endif

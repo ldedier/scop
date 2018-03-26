@@ -6,7 +6,7 @@
 #    By: ldedier <ldedier@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/11/06 18:20:16 by ldedier           #+#    #+#              #
-#    Updated: 2018/03/26 00:15:41 by ldedier          ###   ########.fr        #
+#    Updated: 2018/03/26 16:52:18 by ldedier          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -34,7 +34,7 @@ LIBFT_INCLUDEDIR = includes
 OK_COLOR = \x1b[32;01m
 EOC = \033[0m
 
-SRCS_NO_PREFIX = main.c 
+SRCS_NO_PREFIX = main.c shader.c
 
 INCLUDES_NO_PREFIX = scop.h
 
@@ -60,7 +60,7 @@ debug:
 #$(BINDIR)/$(NAME): $(OBJECTS)
 #	@make -C $(LIBFTDIR)
 #	@make -C $(MLXDIR)
-#	@$(CC) -o $@ $^ -L $(LIBFTDIR) -lft -L $(MLXDIR) -lmlx -I $(MLXDIR) -framework OpenGL -framework Appkit
+#	@$(CC) -o $@ $^ -L $(LIBFTDIR) -lft -L $(MLXDIR) -lmlx -I $(MLXDIR) -framework opengl
 #	@echo "$(OK_COLOR)$(NAME) linked with success !$(EOC)"
 
 $(BINDIR)/$(NAME): $(OBJECTS)
