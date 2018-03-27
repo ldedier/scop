@@ -1,40 +1,37 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_enhance.c                                       :+:      :+:    :+:   */
+/*   ft_tools.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ldedier <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2018/03/27 00:45:39 by ldedier           #+#    #+#             */
-/*   Updated: 2018/03/27 01:20:52 by ldedier          ###   ########.fr       */
+/*   Created: 2018/03/27 21:52:02 by ldedier           #+#    #+#             */
+/*   Updated: 2018/03/27 22:12:39 by ldedier          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <stdio.h>
 #include "libmat.h"
 
-t_mat4	ft_enhance_mat(t_vec3 vec)
+void	ft_print_mat4(t_mat4 mat)
 {
-	t_mat4 mat;
+	int i;
+	int j;
+	int k;
 
-	mat = (float *)malloc(sizeof(float) * 16);
-	mat[0] = vec.x;
-	mat[1] = 0;
-	mat[2] = 0;
-	mat[3] = 0;
-
-	mat[4] = 0;
-	mat[5] = vec.y;
-	mat[6] = 0;
-	mat[7] = 0;
-
-	mat[8] = 0;
-	mat[9] = 0;
-	mat[10] = vec.z;
-	mat[11] = 0;
-
-	mat[12] = 0;
-	mat[13] = 0;
-	mat[14] = 0;
-	mat[15] = 1;
-	return(mat);
+	i = 0;
+	while (i < 4)
+	{
+		k = i;
+		j = 0;
+		while (j < 4)
+		{
+			printf("%.1f ", mat.as_mat[k]);
+			k += 4;
+			j++;
+		}
+		printf("\n");
+		i++;
+	}
+	printf("FINI\n");
 }

@@ -6,7 +6,7 @@
 /*   By: ldedier <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/25 18:54:52 by ldedier           #+#    #+#             */
-/*   Updated: 2018/03/27 01:01:19 by ldedier          ###   ########.fr       */
+/*   Updated: 2018/03/28 01:25:58 by ldedier          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,22 @@
 # include "libft.h"
 # include "libmat.h"
 
+typedef struct	s_keys
+{
+	int			up;
+	int			down;
+	int			left;
+	int			right;
+	int			key_o;
+	int			key_p;
+	int			key_7;
+	int			key_8;
+	int			key_5;
+	int			key_4;
+	int			key_2;
+	int			key_1;
+}				t_keys;
+
 typedef struct	s_shader
 {
 	GLuint		m_vertex_id;
@@ -38,9 +54,11 @@ typedef struct	s_shader
 
 typedef struct	s_env
 {
+	t_keys		keys;
 	t_vec3		translate;
 	t_vec3		rotate;
-	t_vec3		enhance;
+	float		scale;
+	float		speed;
 }				t_env;
 
 t_shader		*shd_new_shader(char *vertex_source, char *fragment_source);
