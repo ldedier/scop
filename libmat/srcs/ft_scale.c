@@ -6,13 +6,13 @@
 /*   By: ldedier <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/28 00:07:33 by ldedier           #+#    #+#             */
-/*   Updated: 2018/03/28 00:07:38 by ldedier          ###   ########.fr       */
+/*   Updated: 2018/03/28 22:23:05 by ldedier          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libmat.h"
 
-t_mat4	ft_scale_mat(float zoom)
+t_mat4	ft_mat4_scale(float zoom)
 {
 	t_mat4 mat;
 

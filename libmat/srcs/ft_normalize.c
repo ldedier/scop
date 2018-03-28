@@ -1,39 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_eye.c                                           :+:      :+:    :+:   */
+/*   ft_normalize.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ldedier <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2018/03/28 00:07:53 by ldedier           #+#    #+#             */
-/*   Updated: 2018/03/28 22:21:14 by ldedier          ###   ########.fr       */
+/*   Created: 2018/03/28 21:46:29 by ldedier           #+#    #+#             */
+/*   Updated: 2018/03/28 21:53:01 by ldedier          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libmat.h"
 
-t_mat4	ft_mat4_eye(void)
+float	ft_vec3_get_norm(t_vec3 vec)
 {
-	t_mat4 mat;
+	return (sqrt(vec.x * vec.x + vec.y * vec.y + vec.z * vec.z));
+}
 
-	mat.as_mat[0] = 1;
-	mat.as_mat[1] = 0;
-	mat.as_mat[2] = 0;
-	mat.as_mat[3] = 0;
+void	ft_vec3_normalize(t_vec3 *vec)
+{
+	float norm;
 
-	mat.as_mat[4] = 0;
-	mat.as_mat[5] = 1;
-	mat.as_mat[6] = 0;
-	mat.as_mat[7] = 0;
-
-	mat.as_mat[8] = 0;
-	mat.as_mat[9] = 0;
-	mat.as_mat[10] = 1;
-	mat.as_mat[11] = 0;
-
-	mat.as_mat[12] = 0;
-	mat.as_mat[13] = 0;
-	mat.as_mat[14] = 0;
-	mat.as_mat[15] = 1;
-	return(mat);
+	norm = ft_vec3_get_norm(*vec);
+	vec->x /= norm;
+	vec->y /= norm;
+	vec->z /= norm;
 }

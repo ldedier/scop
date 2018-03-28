@@ -6,7 +6,7 @@
 /*   By: ldedier <ldedier@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/25 18:53:22 by ldedier           #+#    #+#             */
-/*   Updated: 2018/03/28 01:25:11 by ldedier          ###   ########.fr       */
+/*   Updated: 2018/03/29 01:58:41 by ldedier          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -191,18 +191,43 @@ int		main(int argc, char **argv)
 	glVertexAttribPointer(location, 3, GL_FLOAT, GL_FALSE, 0, NULL);
 
 
+
 	e.scale = 1;
 	e.rotate.x = 0;
 	e.rotate.y = 0;
 	e.rotate.z = 0;
-	t_mat4 translate_mat = ft_translate_mat(e.translate.x, e.translate.y, e.translate.z);
-	t_mat4 scale_mat = ft_scale_mat(e.scale);
-	t_mat4 rotate_mat = ft_rotate_mat(e.rotate.x, e.rotate.y, e.rotate.z);
-	ft_printf("la matrice de rotation:\n");
-	ft_print_mat4(rotate_mat);
+	t_mat4 translate_mat = ft_mat4_translate(e.translate.x, e.translate.y, e.translate.z);
+	t_mat4 scale_mat = ft_mat4_scale(e.scale);
+	t_mat4 rotate_mat = ft_mat4_rotate(e.rotate.x, e.rotate.y, e.rotate.z);
 
-	ft_print_mat4(ft_mat4_mult(ft_scale_mat(4), ft_eye_mat()));
+	e.camera.position.x = 1;
+	e.camera.position.y = 1;
+	e.camera.position.z = 1;
 
+	e.target.x = 0;
+	e.target.y = 0;
+	e.target.z = 0;
+	
+	e.up_axis.x = 0;
+	e.up_axis.y = 1;
+	e.up_axis.z = 0;
+	
+	t_mat4 view_mat = ft_mat4_look_at(e.camera.position, e.target, e.up_axis);
+//	t_mat4 view_mat = ft_mat4_eye();
+
+	ft_printf("la matrice de view:\n");
+	ft_print_mat4(view_mat);
+
+
+	e.camera.fov = 2 * M_PI / 3;
+	e.camera.ratio = 1200.0 / 800.0;
+	e.camera.near = 1;
+	e.camera.far = 1000;
+
+//	t_mat4 proj_mat = ft_mat4_perspective(e.camera);
+	t_mat4 proj_mat = ft_mat4_eye();
+	ft_printf("la matrice de perspective:\n");
+	ft_print_mat4(proj_mat);
 	glUseProgram(shader->m_program_id);
 
 	GLint loc_tr = glGetUniformLocation(shader->m_program_id, "Translate_mat");
@@ -217,6 +242,15 @@ int		main(int argc, char **argv)
 	if (loc_rot != -1)
 		glUniformMatrix4fv(loc_rot, 1, GL_FALSE, rotate_mat.as_mat);
 
+	GLint loc_view = glGetUniformLocation(shader->m_program_id, "View_mat");
+	if (loc_view != -1)
+		glUniformMatrix4fv(loc_view, 1, GL_FALSE, view_mat.as_mat);
+
+	GLint loc_proj = glGetUniformLocation(shader->m_program_id, "Projection_mat");
+	if (loc_proj != -1)
+		glUniformMatrix4fv(loc_proj, 1, GL_FALSE, proj_mat.as_mat);
+
+
 	while (!terminer)
 	{
 		while (SDL_PollEvent(&evenements)) {
@@ -229,14 +263,16 @@ int		main(int argc, char **argv)
 		}
 		ft_process(&e);
 		glClear(GL_COLOR_BUFFER_BIT);
-		translate_mat = ft_translate_mat(e.translate.x, e.translate.y, e.translate.z);
-		scale_mat = ft_scale_mat(e.scale);	
-		rotate_mat = ft_rotate_mat(e.rotate.x, e.rotate.y, e.rotate.z);
+		translate_mat = ft_mat4_translate(e.translate.x, e.translate.y, e.translate.z);
+		scale_mat = ft_mat4_scale(e.scale);	
+		rotate_mat = ft_mat4_rotate(e.rotate.x, e.rotate.y, e.rotate.z);
 		//ft_print_mat4(translate_mat);
-		
+	
 		glUniformMatrix4fv(loc_tr, 1, GL_FALSE, translate_mat.as_mat);
 		glUniformMatrix4fv(loc_scale, 1, GL_FALSE, scale_mat.as_mat);
 		glUniformMatrix4fv(loc_rot, 1, GL_FALSE, rotate_mat.as_mat);
+		glUniformMatrix4fv(loc_view, 1, GL_FALSE, view_mat.as_mat);
+		glUniformMatrix4fv(loc_proj, 1, GL_FALSE, proj_mat.as_mat);
    	
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 		SDL_GL_SwapWindow(fenetre);

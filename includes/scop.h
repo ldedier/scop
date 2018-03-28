@@ -6,7 +6,7 @@
 /*   By: ldedier <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/25 18:54:52 by ldedier           #+#    #+#             */
-/*   Updated: 2018/03/28 01:25:58 by ldedier          ###   ########.fr       */
+/*   Updated: 2018/03/29 00:36:05 by ldedier          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,8 +57,11 @@ typedef struct	s_env
 	t_keys		keys;
 	t_vec3		translate;
 	t_vec3		rotate;
+	t_vec3		target;
+	t_vec3		up_axis;
 	float		scale;
 	float		speed;
+	t_camera	camera;
 }				t_env;
 
 t_shader		*shd_new_shader(char *vertex_source, char *fragment_source);

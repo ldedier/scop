@@ -6,13 +6,13 @@
 /*   By: ldedier <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/27 00:42:09 by ldedier           #+#    #+#             */
-/*   Updated: 2018/03/27 22:26:40 by ldedier          ###   ########.fr       */
+/*   Updated: 2018/03/28 23:20:24 by ldedier          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libmat.h"
 
-t_mat4	ft_translate_mat(float x, float y, float z)
+t_mat4	ft_mat4_translate(float x, float y, float z)
 {
 	t_mat4 mat;
 
