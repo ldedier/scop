@@ -6,7 +6,7 @@
 /*   By: ldedier <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/29 01:30:30 by ldedier           #+#    #+#             */
-/*   Updated: 2018/03/29 01:30:33 by ldedier          ###   ########.fr       */
+/*   Updated: 2018/03/30 21:21:52 by ldedier          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,9 +39,9 @@ float	ft_vec3_dot_product(t_vec3 vec1, t_vec3 vec2)
 
 t_vec3	ft_vec3_cross_product(t_vec3 vec1, t_vec3 vec2)
 {
-	return (ft_new_vec3(vec1.y * vec2.z - vec1.z * vec2.y,
-		   vec1.z * vec2.x - vec1.x - vec2.z,
-		  	vec1.x * vec2.y - vec1.y - vec2.x));
+	return (ft_new_vec3((vec1.y * vec2.z) - (vec1.z * vec2.y),
+		   (vec1.z * vec2.x) - (vec1.x * vec2.z),
+		  	(vec1.x * vec2.y) - (vec1.y * vec2.x)));
 }
 
 t_vec3	ft_vec3_scalar(t_vec3 vec, float k)

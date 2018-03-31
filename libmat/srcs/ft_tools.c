@@ -6,7 +6,7 @@
 /*   By: ldedier <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/27 21:52:02 by ldedier           #+#    #+#             */
-/*   Updated: 2018/03/27 22:12:39 by ldedier          ###   ########.fr       */
+/*   Updated: 2018/03/31 02:40:32 by ldedier          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,5 +33,9 @@ void	ft_print_mat4(t_mat4 mat)
 		printf("\n");
 		i++;
 	}
-	printf("FINI\n");
+}
+
+void	ft_print_vec3(t_vec3 vec)
+{
+		printf("x:%.2f\ny:%.2f\nz:%.2f\n\n", vec.x, vec.y, vec.z);
 }

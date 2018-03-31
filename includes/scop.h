@@ -6,7 +6,7 @@
 /*   By: ldedier <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/25 18:54:52 by ldedier           #+#    #+#             */
-/*   Updated: 2018/03/29 00:36:05 by ldedier          ###   ########.fr       */
+/*   Updated: 2018/03/31 03:48:53 by ldedier          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,13 @@ typedef struct	s_keys
 	int			key_4;
 	int			key_2;
 	int			key_1;
+	int			key_w;
+	int			key_a;
+	int			key_s;
+	int			key_d;
+	int			key_z;
+	int			key_x;
+
 }				t_keys;
 
 typedef struct	s_shader
@@ -52,6 +59,12 @@ typedef struct	s_shader
 	char		*m_fragment_source;
 }				t_shader;
 
+typedef struct		 s_sdl
+{
+	SDL_Window		*window;
+	SDL_GLContext	context;
+}					t_sdl;
+
 typedef struct	s_env
 {
 	t_keys		keys;
@@ -62,11 +75,17 @@ typedef struct	s_env
 	float		scale;
 	float		speed;
 	t_camera	camera;
+	t_sdl		sdl;
 }				t_env;
+
 
 t_shader		*shd_new_shader(char *vertex_source, char *fragment_source);
 int				shd_charge(t_shader *shader);
 int				shd_compile(GLuint	*shader_id, GLenum type, char *filename);
 GLuint			shd_getProgramID(t_shader *shader);
-
+void			ft_keys_down(t_env *e, SDL_Event ev);
+void			ft_keys_up(t_env *e, SDL_Event ev);
+void			ft_process(t_env *e);
+int				ft_init(t_env *e);
+void			ft_quit(t_env *e);
 #endif

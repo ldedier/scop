@@ -2,10 +2,9 @@
 
 #version 410 core
 
-
 // Entrée Shader
 
-in vec2 in_Vertex;
+in vec3 in_Vertex;
 in vec3 in_Colors;
 
 uniform mat4 Translate_mat;
@@ -20,7 +19,6 @@ out vec3 v_Colors;
 
 void main()
 {
-// Position finale du vertex
-    gl_Position = Projection_mat * View_mat * Translate_mat * Scale_mat * Rotate_mat * vec4(in_Vertex,0.0, 1.0);
+    gl_Position = Projection_mat * View_mat * Translate_mat * Rotate_mat * Scale_mat * vec4(in_Vertex, 1.0);
 	v_Colors = in_Colors;
 }

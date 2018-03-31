@@ -6,203 +6,117 @@
 /*   By: ldedier <ldedier@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/25 18:53:22 by ldedier           #+#    #+#             */
-/*   Updated: 2018/03/29 01:58:41 by ldedier          ###   ########.fr       */
+/*   Updated: 2018/03/31 04:03:31 by ldedier          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/scop.h"
 
-void	ft_keys_down(t_env *e, SDL_Event event)
-{
-	if (event.key.keysym.sym == SDLK_UP)
-		e->keys.up = 1;
-	if (event.key.keysym.sym == SDLK_DOWN)
-		e->keys.down = 1;
-	if (event.key.keysym.sym == SDLK_RIGHT)
-		e->keys.right = 1;
-	if (event.key.keysym.sym == SDLK_LEFT)
-		e->keys.left = 1;
-	if (event.key.keysym.sym == SDLK_p)
-		e->keys.key_p = 1;
-	if (event.key.keysym.sym == SDLK_o)
-		e->keys.key_o = 1;
-	if (event.key.keysym.sym == SDLK_KP_8)
-		e->keys.key_8 = 1;
-	if (event.key.keysym.sym == SDLK_KP_7)
-		e->keys.key_7 = 1;
-	if (event.key.keysym.sym == SDLK_KP_5)
-		e->keys.key_5 = 1;
-	if (event.key.keysym.sym == SDLK_KP_4)
-		e->keys.key_4 = 1;
-	if (event.key.keysym.sym == SDLK_KP_2)
-		e->keys.key_2 = 1;
-	if (event.key.keysym.sym == SDLK_KP_1)
-		e->keys.key_1 = 1;
-
-}
-
-void	ft_keys_up(t_env *e, SDL_Event event)
-{
-	if (event.key.keysym.sym == SDLK_UP)
-		e->keys.up = 0;
-	if (event.key.keysym.sym == SDLK_DOWN)
-		e->keys.down = 0;
-	if (event.key.keysym.sym == SDLK_RIGHT)
-		e->keys.right = 0;
-	if (event.key.keysym.sym == SDLK_LEFT)
-		e->keys.left = 0;
-	if (event.key.keysym.sym == SDLK_p)
-		e->keys.key_p = 0;
-	if (event.key.keysym.sym == SDLK_o)
-		e->keys.key_o = 0;
-	if (event.key.keysym.sym == SDLK_KP_8)
-		e->keys.key_8 = 0;
-	if (event.key.keysym.sym == SDLK_KP_7)
-		e->keys.key_7 = 0;
-	if (event.key.keysym.sym == SDLK_KP_5)
-		e->keys.key_5 = 0;
-	if (event.key.keysym.sym == SDLK_KP_4)
-		e->keys.key_4 = 0;
-	if (event.key.keysym.sym == SDLK_KP_2)
-		e->keys.key_2 = 0;
-	if (event.key.keysym.sym == SDLK_KP_1)
-		e->keys.key_1 = 0;
-
-
-}
-void	ft_process(t_env *e)
-{
-	if (e->keys.up)
-		e->translate.y += e->speed;
-	if (e->keys.down)
-		e->translate.y -= e->speed;
-	if (e->keys.right)
-		e->translate.x += e->speed;
-	if (e->keys.left)
-		e->translate.x -= e->speed;
-	if (e->keys.key_p)
-		e->scale += e->speed;
-	if (e->keys.key_o)
-		e->scale -= e->speed;
-	if (e->keys.key_8)
-		e->rotate.x += e->speed;
-	if (e->keys.key_7)
-		e->rotate.x -= e->speed;
-	if (e->keys.key_5)
-		e->rotate.y += e->speed;
-	if (e->keys.key_4)
-		e->rotate.y -= e->speed;
-	if (e->keys.key_2)
-		e->rotate.z += e->speed;
-	if (e->keys.key_1)
-		e->rotate.z -= e->speed;
-
-
-}
-
 int		main(int argc, char **argv)
 {
 	(void) argc;
 	(void) argv;
-	t_env e;
 
-	e.speed = 0.05;
-//	e.translate = ft_new_vec3(0,0,0);
-//	e.enhance = ft_new_vec3(1,1,1);
+	int			terminer;
+	t_env		e;
+	t_shader *shader;
+	SDL_Event event;
 
-	SDL_Window* fenetre = NULL;
-	SDL_GLContext contexteOpenGL = NULL;
-	SDL_Event evenements;
-	int terminer;
+	if (ft_init(&e) == -1)
+		return (1);
+
+	glEnable(GL_DEPTH_TEST);      
+	glDepthFunc(GL_LEQUAL);  
+	glClearDepthf(1.0f);  
+	glClear(GL_DEPTH_BUFFER_BIT);   
+
 	terminer = 0;
+	shader = shd_new_shader("Shaders/basique2D.vert", "Shaders/basique2D.frag");
+	if (!shd_charge(shader))
+	{
+		ft_printf("shader pas bon\n");
+		return (1);
+	}
+
+	float vertices[] = {
+		-1.0, -1.0, -1.0,   1.0, -1.0, -1.0,   1.0, 1.0, -1.0,     // Face 1
+		-1.0, -1.0, -1.0,   -1.0, 1.0, -1.0,   1.0, 1.0, -1.0,     // Face 1
+
+		1.0, -1.0, 1.0,   1.0, -1.0, -1.0,   1.0, 1.0, -1.0,       // Face 2
+		1.0, -1.0, 1.0,   1.0, 1.0, 1.0,   1.0, 1.0, -1.0,         // Face 2
+
+		-1.0, -1.0, 1.0,   1.0, -1.0, 1.0,   1.0, -1.0, -1.0,      // Face 3
+		-1.0, -1.0, 1.0,   -1.0, -1.0, -1.0,   1.0, -1.0, -1.0,    // Face 3
+
+		-1.0, -1.0, 1.0,   1.0, -1.0, 1.0,   1.0, 1.0, 1.0,        // Face 4
+		-1.0, -1.0, 1.0,   -1.0, 1.0, 1.0,   1.0, 1.0, 1.0,        // Face 4
+
+		-1.0, -1.0, -1.0,   -1.0, -1.0, 1.0,   -1.0, 1.0, 1.0,     // Face 5
+		-1.0, -1.0, -1.0,   -1.0, 1.0, -1.0,   -1.0, 1.0, 1.0,     // Face 5
+
+		-1.0, 1.0, 1.0,   1.0, 1.0, 1.0,   1.0, 1.0, -1.0,         // Face 6
+		-1.0, 1.0, 1.0,   -1.0, 1.0, -1.0,   1.0, 1.0, -1.0};      // Face 6
+
+	//	float vertices[] = {-0.5, -0.5, 0.0,  0.0, 0.5,0.0, 0.5,-0.5,0.0 };
+
+	float colors[] = {
+		1.0, 0.0, 0.0,   1.0, 0.0, 0.0,   1.0, 0.0, 0.0,           // Face 1 ROUGE
+		1.0, 0.0, 0.0,   1.0, 0.0, 0.0,   1.0, 0.0, 0.0,           // Face 1
+
+		0.0, 1.0, 0.0,   0.0, 1.0, 0.0,   0.0, 1.0, 0.0,           // Face 2 VERT
+		0.0, 1.0, 0.0,   0.0, 1.0, 0.0,   0.0, 1.0, 0.0,           // Face 2
+
+		0.0, 0.0, 1.0,   0.0, 0.0, 1.0,   0.0, 0.0, 1.0,           // Face 3 BLEU
+		0.0, 0.0, 1.0,   0.0, 0.0, 1.0,   0.0, 0.0, 1.0,           // Face 3
+
+		1.0, 1.0, 0.0,   1.0, 1.0, 0.0,   1.0, 1.0, 0.0,           // Face 4 YELLOW
+		1.0, 1.0, 0.0,   1.0, 1.0, 0.0,   1.0, 1.0, 0.0,           // Face 4
+
+		0.0, 1.0, 1.0,   0.0, 1.0, 1.0,   0.0, 1.0, 1.0,           // Face 5 CYAN
+		0.0, 1.0, 1.0,   0.0, 1.0, 1.0,   0.0, 1.0, 1.0,           // Face 5
+
+		1.0, 0.0, 1.0,   1.0, 0.0, 1.0,   1.0, 0.0, 1.0,           // Face 6
+		1.0, 0.0, 1.0,   1.0, 0.0, 1.0,   1.0, 0.0, 1.0};          // Face 6
 
 /*
-*/
-
-//	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK,
-//	SDL_GL_CONTEXT_PROFILE_CORE);
-//	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-//  SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
-
-
-	if (SDL_Init(SDL_INIT_VIDEO) < 0)
-	{
-		SDL_Quit();
-		return (-1);
-	}
-
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK,
-	SDL_GL_CONTEXT_PROFILE_CORE);
-	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
-
-	fenetre = SDL_CreateWindow("Test SDL 2.0", SDL_WINDOWPOS_CENTERED,
-			SDL_WINDOWPOS_CENTERED, 1200, 800, SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL);
-
-	if (fenetre == 0)
-	{
-		SDL_Quit();
-		return -1;
-	}
-	contexteOpenGL = SDL_GL_CreateContext(fenetre);
-	if (contexteOpenGL == NULL)
-	{
-		ft_printf("inito\n");
-		SDL_DestroyWindow(fenetre);
-		return -1;
-	}
-
-	t_shader *shader = shd_new_shader("Shaders/basique2D.vert", "Shaders/basique2D.frag");
-	if (!shd_charge(shader))
-		ft_printf("pas bon\n");
-	else
-		ft_printf("content!\n");
-
-
-	float vertices[] = {-0.5, -0.5,   0.0, 0.5, 0.5, -0.5};
 	float colors[] = {
 		1.0, 0.0, 0.0,
 		0.0, 1.0, 0.0,
 		0.0, 0.0, 1.0
 	};
-
+*/
 	GLuint vao = 0;
 	glGenVertexArrays(1, &vao);
 	glBindVertexArray(vao);
 	
-
 	GLuint vbo[2];
 	GLint location;
 	glGenBuffers(2, vbo);
 	
-	
 	glEnableVertexAttribArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
-	glBufferData(GL_ARRAY_BUFFER, 6 * sizeof(float), vertices, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, 108 * sizeof(float), vertices, GL_STATIC_DRAW);
 	location = glGetAttribLocation(shader->m_program_id, "in_Vertex");
-	glVertexAttribPointer(location, 2, GL_FLOAT, GL_FALSE, 0, NULL);	
+	glVertexAttribPointer(location, 3, GL_FLOAT, GL_FALSE, 0, NULL);	
 
 	glEnableVertexAttribArray(1);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
-	glBufferData(GL_ARRAY_BUFFER, 9 * sizeof(float), colors, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, 108 * sizeof(float), colors, GL_STATIC_DRAW);
 	location = glGetAttribLocation(shader->m_program_id, "in_Colors");
 	glVertexAttribPointer(location, 3, GL_FLOAT, GL_FALSE, 0, NULL);
 
-
-
-	e.scale = 1;
+	e.scale = 0.11;
 	e.rotate.x = 0;
 	e.rotate.y = 0;
 	e.rotate.z = 0;
+	
 	t_mat4 translate_mat = ft_mat4_translate(e.translate.x, e.translate.y, e.translate.z);
 	t_mat4 scale_mat = ft_mat4_scale(e.scale);
 	t_mat4 rotate_mat = ft_mat4_rotate(e.rotate.x, e.rotate.y, e.rotate.z);
 
-	e.camera.position.x = 1;
-	e.camera.position.y = 1;
-	e.camera.position.z = 1;
+	e.camera.position.x = 2;
+	e.camera.position.y = 0;
+	e.camera.position.z = 0;
 
 	e.target.x = 0;
 	e.target.y = 0;
@@ -218,15 +132,14 @@ int		main(int argc, char **argv)
 	ft_printf("la matrice de view:\n");
 	ft_print_mat4(view_mat);
 
+	e.camera.fov = 1.22173;
+	e.camera.ratio = 1200.0 / 800.0 ;
+	e.camera.near = 0.01;
+	e.camera.far = 500;
 
-	e.camera.fov = 2 * M_PI / 3;
-	e.camera.ratio = 1200.0 / 800.0;
-	e.camera.near = 1;
-	e.camera.far = 1000;
-
-//	t_mat4 proj_mat = ft_mat4_perspective(e.camera);
-	t_mat4 proj_mat = ft_mat4_eye();
-	ft_printf("la matrice de perspective:\n");
+	t_mat4 proj_mat = ft_mat4_perspective(e.camera);
+	//t_mat4 proj_mat = ft_mat4_eye();
+	// ft_printf("la matrice de perspective:\n");
 	ft_print_mat4(proj_mat);
 	glUseProgram(shader->m_program_id);
 
@@ -249,37 +162,38 @@ int		main(int argc, char **argv)
 	GLint loc_proj = glGetUniformLocation(shader->m_program_id, "Projection_mat");
 	if (loc_proj != -1)
 		glUniformMatrix4fv(loc_proj, 1, GL_FALSE, proj_mat.as_mat);
-
-
+	
 	while (!terminer)
 	{
-		while (SDL_PollEvent(&evenements)) {
-			if (evenements.type == SDL_KEYDOWN)
-				ft_keys_down(&e, evenements);
-			if (evenements.type == SDL_KEYUP)
-				ft_keys_up(&e, evenements);
-			if (evenements.window.event == SDL_WINDOWEVENT_CLOSE || evenements.key.keysym.sym == SDLK_ESCAPE)
+		while (SDL_PollEvent(&event)) {
+			if (event.type == SDL_KEYDOWN)
+				ft_keys_down(&e, event);
+			if (event.type == SDL_KEYUP)
+				ft_keys_up(&e, event);
+			if (event.window.event == SDL_WINDOWEVENT_CLOSE || event.key.keysym.sym == SDLK_ESCAPE)
 				terminer = 1;
 		}
 		ft_process(&e);
-		glClear(GL_COLOR_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		translate_mat = ft_mat4_translate(e.translate.x, e.translate.y, e.translate.z);
-		scale_mat = ft_mat4_scale(e.scale);	
+		scale_mat = ft_mat4_scale(e.scale);
 		rotate_mat = ft_mat4_rotate(e.rotate.x, e.rotate.y, e.rotate.z);
-		//ft_print_mat4(translate_mat);
+		
+		view_mat = ft_mat4_look_at(e.camera.position, e.target, e.up_axis);
+		ft_printf("la matrice de view:\n");
+		ft_print_mat4(view_mat);
 	
+		ft_printf("la position de la camera\n");
+
+		ft_print_vec3(e.camera.position);
 		glUniformMatrix4fv(loc_tr, 1, GL_FALSE, translate_mat.as_mat);
 		glUniformMatrix4fv(loc_scale, 1, GL_FALSE, scale_mat.as_mat);
 		glUniformMatrix4fv(loc_rot, 1, GL_FALSE, rotate_mat.as_mat);
 		glUniformMatrix4fv(loc_view, 1, GL_FALSE, view_mat.as_mat);
 		glUniformMatrix4fv(loc_proj, 1, GL_FALSE, proj_mat.as_mat);
-   	
-		glDrawArrays(GL_TRIANGLES, 0, 3);
-		SDL_GL_SwapWindow(fenetre);
+		glDrawArrays(GL_TRIANGLES, 0, 108);
+		SDL_GL_SwapWindow(e.sdl.window);
 	}
-	glUseProgram(0);
-	SDL_GL_DeleteContext(contexteOpenGL);
-	SDL_DestroyWindow(fenetre);
-	SDL_Quit();
+	ft_quit(&e);
 	return 0;
 }
