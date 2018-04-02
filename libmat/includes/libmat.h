@@ -6,7 +6,7 @@
 /*   By: ldedier <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/27 00:16:34 by ldedier           #+#    #+#             */
-/*   Updated: 2018/03/31 02:40:00 by ldedier          ###   ########.fr       */
+/*   Updated: 2018/03/31 15:34:19 by ldedier          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,9 @@ typedef struct		s_camera
 	float			ratio;
 	float			near;
 	float			far;
-	float			teta;
+	float			yaw;
+	float			pitch;
+	float			roll;
 	t_vec3			position;
 }					t_camera;
 
@@ -84,6 +86,7 @@ t_mat4				ft_mat4_rotate_y(float beta);
 t_mat4				ft_mat4_rotate_z(float gamma);
 t_mat4				ft_mat4_rotate(float alpha, float beta, float gamma);
 t_mat4				ft_mat4_look_at(t_vec3 camera, t_vec3 target, t_vec3 up_axis);
+t_mat4				ft_mat4_look_fps(t_vec3 camera, float yaw, float pitch);
 t_mat4				ft_mat4_perspective(t_camera cam);
 void				ft_print_mat4(t_mat4 mat);
 void				ft_print_vec3(t_vec3 vec);

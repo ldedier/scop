@@ -6,7 +6,7 @@
 /*   By: ldedier <ldedier@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/25 18:53:22 by ldedier           #+#    #+#             */
-/*   Updated: 2018/03/31 04:03:31 by ldedier          ###   ########.fr       */
+/*   Updated: 2018/04/02 20:31:22 by ldedier          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ int		main(int argc, char **argv)
 	glClear(GL_DEPTH_BUFFER_BIT);   
 
 	terminer = 0;
-	shader = shd_new_shader("Shaders/basique2D.vert", "Shaders/basique2D.frag");
+	shader = shd_new_shader(PATH"/Shaders/basique2D.vert", PATH"/Shaders/basique2D.frag");
 	if (!shd_charge(shader))
 	{
 		ft_printf("shader pas bon\n");
@@ -105,7 +105,7 @@ int		main(int argc, char **argv)
 	location = glGetAttribLocation(shader->m_program_id, "in_Colors");
 	glVertexAttribPointer(location, 3, GL_FLOAT, GL_FALSE, 0, NULL);
 
-	e.scale = 0.11;
+	e.scale = 1;
 	e.rotate.x = 0;
 	e.rotate.y = 0;
 	e.rotate.z = 0;
@@ -114,31 +114,29 @@ int		main(int argc, char **argv)
 	t_mat4 scale_mat = ft_mat4_scale(e.scale);
 	t_mat4 rotate_mat = ft_mat4_rotate(e.rotate.x, e.rotate.y, e.rotate.z);
 
-	e.camera.position.x = 2;
+	e.camera.position.x = 0;
 	e.camera.position.y = 0;
-	e.camera.position.z = 0;
-
-	e.target.x = 0;
-	e.target.y = 0;
-	e.target.z = 0;
+	e.camera.position.z = 5;
 	
 	e.up_axis.x = 0;
 	e.up_axis.y = 1;
 	e.up_axis.z = 0;
 	
-	t_mat4 view_mat = ft_mat4_look_at(e.camera.position, e.target, e.up_axis);
+	e.camera.yaw = 0;
+	e.camera.pitch = 0;
+	t_mat4 view_mat = ft_mat4_look_fps(e.camera.position,e.camera.yaw, e.camera.pitch);
 //	t_mat4 view_mat = ft_mat4_eye();
 
 	ft_printf("la matrice de view:\n");
 	ft_print_mat4(view_mat);
 
-	e.camera.fov = 1.22173;
-	e.camera.ratio = 1200.0 / 800.0 ;
-	e.camera.near = 0.01;
-	e.camera.far = 500;
+	e.speed = 0.1;
+	e.camera.fov = (70.f/ 180.f) * M_PI;
+	e.camera.ratio = 1200.0 / 800.0;
+	e.camera.near = 0.1;
+	e.camera.far = 1000;
 
 	t_mat4 proj_mat = ft_mat4_perspective(e.camera);
-	//t_mat4 proj_mat = ft_mat4_eye();
 	// ft_printf("la matrice de perspective:\n");
 	ft_print_mat4(proj_mat);
 	glUseProgram(shader->m_program_id);
@@ -163,6 +161,8 @@ int		main(int argc, char **argv)
 	if (loc_proj != -1)
 		glUniformMatrix4fv(loc_proj, 1, GL_FALSE, proj_mat.as_mat);
 	
+//	glEnable(GL_DEPTH_TEST);
+
 	while (!terminer)
 	{
 		while (SDL_PollEvent(&event)) {
@@ -170,22 +170,23 @@ int		main(int argc, char **argv)
 				ft_keys_down(&e, event);
 			if (event.type == SDL_KEYUP)
 				ft_keys_up(&e, event);
-			if (event.window.event == SDL_WINDOWEVENT_CLOSE || event.key.keysym.sym == SDLK_ESCAPE)
+			if (event.type == SDL_MOUSEMOTION)
+				ft_mouse_motion(&e, event);
+			if (event.window.event == SDL_WINDOWEVENT_CLOSE || (event.key.keysym.sym == SDLK_ESCAPE && event.type == SDL_KEYDOWN))
 				terminer = 1;
 		}
 		ft_process(&e);
+		glClearDepthf(1.0f);  
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+
 		translate_mat = ft_mat4_translate(e.translate.x, e.translate.y, e.translate.z);
 		scale_mat = ft_mat4_scale(e.scale);
 		rotate_mat = ft_mat4_rotate(e.rotate.x, e.rotate.y, e.rotate.z);
+		view_mat = ft_mat4_look_fps(e.camera.position,e.camera.yaw, e.camera.pitch);
 		
-		view_mat = ft_mat4_look_at(e.camera.position, e.target, e.up_axis);
-		ft_printf("la matrice de view:\n");
-		ft_print_mat4(view_mat);
+		//ft_print_mat4(translate_mat);
 	
-		ft_printf("la position de la camera\n");
-
-		ft_print_vec3(e.camera.position);
 		glUniformMatrix4fv(loc_tr, 1, GL_FALSE, translate_mat.as_mat);
 		glUniformMatrix4fv(loc_scale, 1, GL_FALSE, scale_mat.as_mat);
 		glUniformMatrix4fv(loc_rot, 1, GL_FALSE, rotate_mat.as_mat);
@@ -195,5 +196,6 @@ int		main(int argc, char **argv)
 		SDL_GL_SwapWindow(e.sdl.window);
 	}
 	ft_quit(&e);
+	ft_printf("clraen");
 	return 0;
 }

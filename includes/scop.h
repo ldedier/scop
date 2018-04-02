@@ -6,7 +6,7 @@
 /*   By: ldedier <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/25 18:54:52 by ldedier           #+#    #+#             */
-/*   Updated: 2018/03/31 03:48:53 by ldedier          ###   ########.fr       */
+/*   Updated: 2018/03/31 16:43:11 by ldedier          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,9 +45,9 @@ typedef struct	s_keys
 	int			key_a;
 	int			key_s;
 	int			key_d;
-	int			key_z;
-	int			key_x;
-
+	int			key_ctrl;
+	int			key_space;
+	int			key_shift;
 }				t_keys;
 
 typedef struct	s_shader
@@ -85,6 +85,7 @@ int				shd_compile(GLuint	*shader_id, GLenum type, char *filename);
 GLuint			shd_getProgramID(t_shader *shader);
 void			ft_keys_down(t_env *e, SDL_Event ev);
 void			ft_keys_up(t_env *e, SDL_Event ev);
+void			ft_mouse_motion(t_env *e, SDL_Event ev);
 void			ft_process(t_env *e);
 int				ft_init(t_env *e);
 void			ft_quit(t_env *e);
