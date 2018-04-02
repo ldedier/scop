@@ -6,7 +6,7 @@
 /*   By: ldedier <ldedier@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/25 18:53:22 by ldedier           #+#    #+#             */
-/*   Updated: 2018/04/02 20:31:22 by ldedier          ###   ########.fr       */
+/*   Updated: 2018/04/02 22:44:17 by ldedier          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@ int		main(int argc, char **argv)
 	int			terminer;
 	t_env		e;
 	t_shader *shader;
+	t_shader *shader_skybox;
 	SDL_Event event;
 
 	if (ft_init(&e) == -1)
@@ -38,6 +39,12 @@ int		main(int argc, char **argv)
 		return (1);
 	}
 
+	shader_skybox = shd_new_shader(PATH"/Shaders/skybox.vert", PATH"/Shaders/skybox.frag");
+	if (!shd_charge(shader_skybox))
+	{
+		ft_printf("shader pas bon\n");
+		return (1);
+	}
 	float vertices[] = {
 		-1.0, -1.0, -1.0,   1.0, -1.0, -1.0,   1.0, 1.0, -1.0,     // Face 1
 		-1.0, -1.0, -1.0,   -1.0, 1.0, -1.0,   1.0, 1.0, -1.0,     // Face 1
@@ -105,6 +112,71 @@ int		main(int argc, char **argv)
 	location = glGetAttribLocation(shader->m_program_id, "in_Colors");
 	glVertexAttribPointer(location, 3, GL_FLOAT, GL_FALSE, 0, NULL);
 
+
+float skyboxVertices[] = {
+    // positions          
+    -1000.0f,  1000.0f, -1000.0f,
+    -1000.0f, -1000.0f, -1000.0f,
+     1000.0f, -1000.0f, -1000.0f,
+     1000.0f, -1000.0f, -1000.0f,
+     1000.0f,  1000.0f, -1000.0f,
+    -1000.0f,  1000.0f, -1000.0f,
+
+    -1000.0f, -1000.0f,  1000.0f,
+    -1000.0f, -1000.0f, -1000.0f,
+    -1000.0f,  1000.0f, -1000.0f,
+    -1000.0f,  1000.0f, -1000.0f,
+    -1000.0f,  1000.0f,  1000.0f,
+    -1000.0f, -1000.0f,  1000.0f,
+
+     1000.0f, -1000.0f, -1000.0f,
+     1000.0f, -1000.0f,  1000.0f,
+     1000.0f,  1000.0f,  1000.0f,
+     1000.0f,  1000.0f,  1000.0f,
+     1000.0f,  1000.0f, -1000.0f,
+     1000.0f, -1000.0f, -1000.0f,
+
+    -1000.0f, -1000.0f,  1000.0f,
+    -1000.0f,  1000.0f,  1000.0f,
+     1000.0f,  1000.0f,  1000.0f,
+     1000.0f,  1000.0f,  1000.0f,
+     1000.0f, -1000.0f,  1000.0f,
+    -1000.0f, -1000.0f,  1000.0f,
+
+    -1000.0f,  1000.0f, -1000.0f,
+     1000.0f,  1000.0f, -1000.0f,
+     1000.0f,  1000.0f,  1000.0f,
+     1000.0f,  1000.0f,  1000.0f,
+    -1000.0f,  1000.0f,  1000.0f,
+    -1000.0f,  1000.0f, -1000.0f,
+
+    -1000.0f, -1000.0f, -1000.0f,
+    -1000.0f, -1000.0f,  1000.0f,
+     1000.0f, -1000.0f, -1000.0f,
+     1000.0f, -1000.0f, -1000.0f,
+    -1000.0f, -1000.0f,  1000.0f,
+     1000.0f, -1000.0f,  1000.0f
+};
+
+	GLuint vao_skybox = 1;
+	glGenVertexArrays(1, &vao_skybox);
+	glBindVertexArray(vao_skybox);
+	
+	GLuint vbo_skybox[2];
+	glGenBuffers(2, vbo_skybox);
+	
+	glEnableVertexAttribArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo_skybox[0]);
+	glBufferData(GL_ARRAY_BUFFER, 108 * sizeof(float), skyboxVertices, GL_STATIC_DRAW);
+	location = glGetAttribLocation(shader_skybox->m_program_id, "in_Vertex_skybox");
+	glVertexAttribPointer(location, 3, GL_FLOAT, GL_FALSE, 0, NULL);	
+
+	glEnableVertexAttribArray(1);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo_skybox[1]);
+	glBufferData(GL_ARRAY_BUFFER, 108 * sizeof(float), colors, GL_STATIC_DRAW);
+	location = glGetAttribLocation(shader_skybox->m_program_id, "in_Colors_skybox");
+	glVertexAttribPointer(location, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+
 	e.scale = 1;
 	e.rotate.x = 0;
 	e.rotate.y = 0;
@@ -134,12 +206,15 @@ int		main(int argc, char **argv)
 	e.camera.fov = (70.f/ 180.f) * M_PI;
 	e.camera.ratio = 1200.0 / 800.0;
 	e.camera.near = 0.1;
-	e.camera.far = 1000;
+	e.camera.far = 1000000;
 
 	t_mat4 proj_mat = ft_mat4_perspective(e.camera);
 	// ft_printf("la matrice de perspective:\n");
 	ft_print_mat4(proj_mat);
-	glUseProgram(shader->m_program_id);
+	
+	
+	glUseProgram(shader->m_program_id);	
+	glBindVertexArray(vao);
 
 	GLint loc_tr = glGetUniformLocation(shader->m_program_id, "Translate_mat");
 	if (loc_tr != -1)
@@ -160,8 +235,34 @@ int		main(int argc, char **argv)
 	GLint loc_proj = glGetUniformLocation(shader->m_program_id, "Projection_mat");
 	if (loc_proj != -1)
 		glUniformMatrix4fv(loc_proj, 1, GL_FALSE, proj_mat.as_mat);
+
+
 	
+	glUseProgram(shader_skybox->m_program_id);
+	glBindVertexArray(vao_skybox);
+	
+	GLint loc_tr_s = glGetUniformLocation(shader_skybox->m_program_id, "Translate_mat");
+	if (loc_tr_s != -1)
+		glUniformMatrix4fv(loc_tr_s, 1, GL_FALSE, translate_mat.as_mat);
+
+	GLint loc_scale_s = glGetUniformLocation(shader_skybox->m_program_id, "Scale_mat");
+	if (loc_scale_s != -1)
+		glUniformMatrix4fv(loc_scale_s, 1, GL_FALSE, scale_mat.as_mat);
+
+	GLint loc_rot_s = glGetUniformLocation(shader_skybox->m_program_id, "Rotate_mat");
+	if (loc_rot_s != -1)
+		glUniformMatrix4fv(loc_rot_s, 1, GL_FALSE, rotate_mat.as_mat);
+
+	GLint loc_view_s = glGetUniformLocation(shader_skybox->m_program_id, "View_mat");
+	if (loc_view_s != -1)
+		glUniformMatrix4fv(loc_view_s, 1, GL_FALSE, view_mat.as_mat);
+
+	GLint loc_proj_s = glGetUniformLocation(shader_skybox->m_program_id, "Projection_mat");
+	if (loc_proj_s != -1)
+		glUniformMatrix4fv(loc_proj_s, 1, GL_FALSE, proj_mat.as_mat);
+
 //	glEnable(GL_DEPTH_TEST);
+	 glClearColor(0.5,0,0.5,0.0);
 
 	while (!terminer)
 	{
@@ -179,23 +280,34 @@ int		main(int argc, char **argv)
 		glClearDepthf(1.0f);  
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-
 		translate_mat = ft_mat4_translate(e.translate.x, e.translate.y, e.translate.z);
 		scale_mat = ft_mat4_scale(e.scale);
 		rotate_mat = ft_mat4_rotate(e.rotate.x, e.rotate.y, e.rotate.z);
 		view_mat = ft_mat4_look_fps(e.camera.position,e.camera.yaw, e.camera.pitch);
 		
 		//ft_print_mat4(translate_mat);
-	
+		
+		glUseProgram(shader->m_program_id);
+		glBindVertexArray(vao);
 		glUniformMatrix4fv(loc_tr, 1, GL_FALSE, translate_mat.as_mat);
 		glUniformMatrix4fv(loc_scale, 1, GL_FALSE, scale_mat.as_mat);
 		glUniformMatrix4fv(loc_rot, 1, GL_FALSE, rotate_mat.as_mat);
 		glUniformMatrix4fv(loc_view, 1, GL_FALSE, view_mat.as_mat);
 		glUniformMatrix4fv(loc_proj, 1, GL_FALSE, proj_mat.as_mat);
 		glDrawArrays(GL_TRIANGLES, 0, 108);
+		
+		
+		glUseProgram(shader_skybox->m_program_id);
+		glBindVertexArray(vao_skybox);
+		glUniformMatrix4fv(loc_tr_s, 1, GL_FALSE, translate_mat.as_mat);
+		glUniformMatrix4fv(loc_scale_s, 1, GL_FALSE, scale_mat.as_mat);
+		glUniformMatrix4fv(loc_rot_s, 1, GL_FALSE, rotate_mat.as_mat);
+		glUniformMatrix4fv(loc_view_s, 1, GL_FALSE, view_mat.as_mat);
+		glUniformMatrix4fv(loc_proj_s, 1, GL_FALSE, proj_mat.as_mat);
+
+		glDrawArrays(GL_TRIANGLES, 0, 108);
 		SDL_GL_SwapWindow(e.sdl.window);
 	}
 	ft_quit(&e);
-	ft_printf("clraen");
 	return 0;
 }
