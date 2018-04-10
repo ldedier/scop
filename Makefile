@@ -6,7 +6,7 @@
 #    By: ldedier <ldedier@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/11/06 18:20:16 by ldedier           #+#    #+#              #
-#    Updated: 2018/03/30 16:53:04 by ldedier          ###   ########.fr        #
+#    Updated: 2018/04/10 01:41:21 by ldedier          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -55,6 +55,9 @@ SDL2 = ./frameworks/SDL2.framework/Versions/A/SDL2
 SDL2_image = ./frameworks/SDL2_image.framework/Versions/A/SDL2_image
 SDL2_mixer = ./frameworks/SDL2_mixer.framework/Versions/A/SDL2_mixer
 SDL2_ttf = ./frameworks/SDL2_ttf.framework/Versions/A/SDL2_ttf
+
+opti:
+	@make all -j
 
 all: $(BINDIR)/$(NAME)
 

@@ -4,14 +4,15 @@
 
 
 // Sortie Shader
+
 in	vec3 v_Colors;
+in	vec3 texCoords;
+
 out vec4 fragColor;
 
-// Fonction main
+uniform samplerCube skybox;
 
 void main()
 {
-
-// Couleur finale du pixel
-fragColor = vec4(v_Colors, 0.0);
+	fragColor = texture(skybox, texCoords);
 }

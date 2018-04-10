@@ -6,11 +6,11 @@
 /*   By: ldedier <ldedier@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/25 18:53:22 by ldedier           #+#    #+#             */
-/*   Updated: 2018/04/02 22:44:46 by ldedier          ###   ########.fr       */
+/*   Updated: 2018/04/10 02:01:27 by ldedier          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/scop.h"
+#include "scop.h"
 
 int		main(int argc, char **argv)
 {
@@ -161,7 +161,46 @@ float skyboxVertices[] = {
 	GLuint vao_skybox = 1;
 	glGenVertexArrays(1, &vao_skybox);
 	glBindVertexArray(vao_skybox);
+
+	GLuint skybox_id;
+	glActiveTexture(GL_TEXTURE0);
+	glEnable(GL_TEXTURE_CUBE_MAP);
+	glGenTextures(1, &skybox_id);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, skybox_id);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+
+	unsigned char data[14];
 	
+	int i;
+	i = 0;
+	while(i < 6)
+	{
+		data[0] =255;
+		data[1] =0;
+		data[2] =255;
+
+		data[3] =255;
+		data[4] =255;
+		data[5] =255;
+	
+//PADDING MDRR
+		
+		data[8] = 0;
+		data[9] =255;
+		data[10] =255;
+		
+		data[11] = 255;
+		data[12] = 255;
+		data[13] = 0;
+
+		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, 2, 2, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+		i++;
+	}
+
 	GLuint vbo_skybox[2];
 	glGenBuffers(2, vbo_skybox);
 	
@@ -169,7 +208,7 @@ float skyboxVertices[] = {
 	glBindBuffer(GL_ARRAY_BUFFER, vbo_skybox[0]);
 	glBufferData(GL_ARRAY_BUFFER, 108 * sizeof(float), skyboxVertices, GL_STATIC_DRAW);
 	location = glGetAttribLocation(shader_skybox->m_program_id, "in_Vertex_skybox");
-	glVertexAttribPointer(location, 3, GL_FLOAT, GL_FALSE, 0, NULL);	
+	glVertexAttribPointer(location, 3, GL_FLOAT, GL_FALSE, 0, NULL);
 
 	glEnableVertexAttribArray(1);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo_skybox[1]);
@@ -199,6 +238,7 @@ float skyboxVertices[] = {
 	t_mat4 view_mat = ft_mat4_look_fps(e.camera.position,e.camera.yaw, e.camera.pitch);
 //	t_mat4 view_mat = ft_mat4_eye();
 
+	t_mat4 model_view_mat = ft_mat4_model_view_matrix_mat(translate_mat, scale_mat, rotate_mat);
 	ft_printf("la matrice de view:\n");
 	ft_print_mat4(view_mat);
 
@@ -206,27 +246,20 @@ float skyboxVertices[] = {
 	e.camera.fov = (70.f/ 180.f) * M_PI;
 	e.camera.ratio = 1200.0 / 800.0;
 	e.camera.near = 0.1;
-	e.camera.far = 1000000;
+	e.camera.far = 10000;
 
 	t_mat4 proj_mat = ft_mat4_perspective(e.camera);
 	// ft_printf("la matrice de perspective:\n");
 	ft_print_mat4(proj_mat);
-	
-	
+		
 	glUseProgram(shader->m_program_id);	
 	glBindVertexArray(vao);
 
-	GLint loc_tr = glGetUniformLocation(shader->m_program_id, "Translate_mat");
-	if (loc_tr != -1)
-		glUniformMatrix4fv(loc_tr, 1, GL_FALSE, translate_mat.as_mat);
+	
 
-	GLint loc_scale = glGetUniformLocation(shader->m_program_id, "Scale_mat");
-	if (loc_scale != -1)
-		glUniformMatrix4fv(loc_scale, 1, GL_FALSE, scale_mat.as_mat);
-
-	GLint loc_rot = glGetUniformLocation(shader->m_program_id, "Rotate_mat");
-	if (loc_rot != -1)
-		glUniformMatrix4fv(loc_rot, 1, GL_FALSE, rotate_mat.as_mat);
+	GLint loc_mv = glGetUniformLocation(shader->m_program_id, "Model_mat");
+	if (loc_mv != -1)
+		glUniformMatrix4fv(loc_mv,  1, GL_FALSE, model_view_mat.as_mat);
 
 	GLint loc_view = glGetUniformLocation(shader->m_program_id, "View_mat");
 	if (loc_view != -1)
@@ -235,8 +268,6 @@ float skyboxVertices[] = {
 	GLint loc_proj = glGetUniformLocation(shader->m_program_id, "Projection_mat");
 	if (loc_proj != -1)
 		glUniformMatrix4fv(loc_proj, 1, GL_FALSE, proj_mat.as_mat);
-
-
 	
 	glUseProgram(shader_skybox->m_program_id);
 	glBindVertexArray(vao_skybox);
@@ -244,14 +275,6 @@ float skyboxVertices[] = {
 	GLint loc_tr_s = glGetUniformLocation(shader_skybox->m_program_id, "Translate_mat");
 	if (loc_tr_s != -1)
 		glUniformMatrix4fv(loc_tr_s, 1, GL_FALSE, translate_mat.as_mat);
-
-	GLint loc_scale_s = glGetUniformLocation(shader_skybox->m_program_id, "Scale_mat");
-	if (loc_scale_s != -1)
-		glUniformMatrix4fv(loc_scale_s, 1, GL_FALSE, scale_mat.as_mat);
-
-	GLint loc_rot_s = glGetUniformLocation(shader_skybox->m_program_id, "Rotate_mat");
-	if (loc_rot_s != -1)
-		glUniformMatrix4fv(loc_rot_s, 1, GL_FALSE, rotate_mat.as_mat);
 
 	GLint loc_view_s = glGetUniformLocation(shader_skybox->m_program_id, "View_mat");
 	if (loc_view_s != -1)
@@ -262,7 +285,7 @@ float skyboxVertices[] = {
 		glUniformMatrix4fv(loc_proj_s, 1, GL_FALSE, proj_mat.as_mat);
 
 //	glEnable(GL_DEPTH_TEST);
-	 glClearColor(0.5,0,0.5,0.0);
+	//  glClearColor(0.5,0,0.5,0.0);
 
 	while (!terminer)
 	{
@@ -284,14 +307,14 @@ float skyboxVertices[] = {
 		scale_mat = ft_mat4_scale(e.scale);
 		rotate_mat = ft_mat4_rotate(e.rotate.x, e.rotate.y, e.rotate.z);
 		view_mat = ft_mat4_look_fps(e.camera.position,e.camera.yaw, e.camera.pitch);
+		model_view_mat = ft_mat4_model_view_matrix_mat(translate_mat, scale_mat, rotate_mat);
 		
 		//ft_print_mat4(translate_mat);
 		
 		glUseProgram(shader->m_program_id);
 		glBindVertexArray(vao);
-		glUniformMatrix4fv(loc_tr, 1, GL_FALSE, translate_mat.as_mat);
-		glUniformMatrix4fv(loc_scale, 1, GL_FALSE, scale_mat.as_mat);
-		glUniformMatrix4fv(loc_rot, 1, GL_FALSE, rotate_mat.as_mat);
+
+		glUniformMatrix4fv(loc_mv, 1, GL_FALSE, model_view_mat.as_mat);
 		glUniformMatrix4fv(loc_view, 1, GL_FALSE, view_mat.as_mat);
 		glUniformMatrix4fv(loc_proj, 1, GL_FALSE, proj_mat.as_mat);
 		glDrawArrays(GL_TRIANGLES, 0, 108);
@@ -299,9 +322,8 @@ float skyboxVertices[] = {
 		
 		glUseProgram(shader_skybox->m_program_id);
 		glBindVertexArray(vao_skybox);
-		glUniformMatrix4fv(loc_tr_s, 1, GL_FALSE, translate_mat.as_mat);
-		glUniformMatrix4fv(loc_scale_s, 1, GL_FALSE, scale_mat.as_mat);
-		glUniformMatrix4fv(loc_rot_s, 1, GL_FALSE, rotate_mat.as_mat);
+		
+		glUniformMatrix4fv(loc_tr_s, 1, GL_FALSE, ft_mat4_translate(e.camera.position.x,e.camera.position.y,e.camera.position.z).as_mat);
 		glUniformMatrix4fv(loc_view_s, 1, GL_FALSE, view_mat.as_mat);
 		glUniformMatrix4fv(loc_proj_s, 1, GL_FALSE, proj_mat.as_mat);
 
