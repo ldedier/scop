@@ -5,7 +5,6 @@
 
 // Sortie Shader
 
-in	vec3 v_Colors;
 in	vec3 texCoords;
 
 out vec4 fragColor;

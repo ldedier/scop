@@ -6,7 +6,7 @@
 /*   By: ldedier <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/26 14:35:16 by ldedier           #+#    #+#             */
-/*   Updated: 2018/03/26 21:32:29 by ldedier          ###   ########.fr       */
+/*   Updated: 2018/04/21 16:56:07 by ldedier          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,29 +95,26 @@ int			shd_charge(t_shader *shader)
 		return 1;
 }
 
-char *readFile(char *fileName) {
-	FILE *file = fopen(fileName, "r");
-	char *code;
-	size_t n = 0;
-	int c;
-
-	if (file == NULL)
-		return NULL; //could not open file
-	fseek(file, 0, SEEK_END);
-	long f_size = ftell(file);
-	fseek(file, 0, SEEK_SET);
-	code = malloc(f_size);
-
-	while ((c = fgetc(file)) != EOF) {
-		code[n++] = (char)c;
-	}
-	code[n] = '\0';
-	return code;
+t_mmap	ft_map_file(char *fileName)
+{
+	t_mmap res;
+	int fd;
+	int size;
+	struct stat s;
+	
+	fd = open (fileName, O_RDONLY);
+    fstat (fd, &s);
+	size = s.st_size;
+	res.ptr = mmap(0, size, PROT_READ, MAP_PRIVATE, fd, 0);
+	res.size = size;
+	return (res);
 }
+
 
 int     shd_compile(GLuint *shader_id, GLenum type, char *filename)
 {
 	*shader_id = glCreateShader(type);
+	t_mmap map;
 
 	if (*shader_id == 0)
 	{
@@ -127,7 +124,9 @@ int     shd_compile(GLuint *shader_id, GLenum type, char *filename)
 
 	const GLchar* chaineCodeSource;
 
-	chaineCodeSource = readFile(filename);
+	map = ft_map_file(filename);
+	chaineCodeSource = map.ptr;
+	ft_putendl(chaineCodeSource);
 	if (!chaineCodeSource)
 		return 0;
 	// Envoi du code source au shader
@@ -135,6 +134,7 @@ int     shd_compile(GLuint *shader_id, GLenum type, char *filename)
 
 	ft_printf("code source:\n%s\n", chaineCodeSource);
 	glShaderSource(*shader_id, 1, &chaineCodeSource, 0);
+	munmap(map.ptr, map.size);
 
 	// Compilation du shader
 

@@ -6,7 +6,7 @@
 /*   By: ldedier <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/25 18:54:52 by ldedier           #+#    #+#             */
-/*   Updated: 2018/04/10 01:50:32 by ldedier          ###   ########.fr       */
+/*   Updated: 2018/04/21 16:53:35 by ldedier          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,9 @@
 # include <SDL2_ttf/SDL_ttf.h>
 # include <SDL2_mixer/SDL_mixer.h>
 # include <fcntl.h>
+# include <sys/mman.h>
+# include <sys/types.h>
+# include <sys/stat.h>
 //# include "mlx.h"
 //# include "mlx_opengl.h"
 //# include "mlx_int.h"
@@ -49,6 +52,12 @@ typedef struct	s_keys
 	int			key_space;
 	int			key_shift;
 }				t_keys;
+
+typedef struct	s_mmap
+{
+	void		*ptr;
+	size_t		size;
+}				t_mmap;
 
 typedef struct	s_shader
 {

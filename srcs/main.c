@@ -6,7 +6,7 @@
 /*   By: ldedier <ldedier@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/25 18:53:22 by ldedier           #+#    #+#             */
-/*   Updated: 2018/04/10 02:01:27 by ldedier          ###   ########.fr       */
+/*   Updated: 2018/04/21 17:19:51 by ldedier          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -177,7 +177,7 @@ float skyboxVertices[] = {
 	
 	int i;
 	i = 0;
-	while(i < 6)
+	while (i < 6)
 	{
 		data[0] =255;
 		data[1] =0;
@@ -200,8 +200,7 @@ float skyboxVertices[] = {
 		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, 2, 2, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
 		i++;
 	}
-
-	GLuint vbo_skybox[2];
+	GLuint vbo_skybox[1];
 	glGenBuffers(2, vbo_skybox);
 	
 	glEnableVertexAttribArray(0);
@@ -210,11 +209,6 @@ float skyboxVertices[] = {
 	location = glGetAttribLocation(shader_skybox->m_program_id, "in_Vertex_skybox");
 	glVertexAttribPointer(location, 3, GL_FLOAT, GL_FALSE, 0, NULL);
 
-	glEnableVertexAttribArray(1);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo_skybox[1]);
-	glBufferData(GL_ARRAY_BUFFER, 108 * sizeof(float), colors, GL_STATIC_DRAW);
-	location = glGetAttribLocation(shader_skybox->m_program_id, "in_Colors_skybox");
-	glVertexAttribPointer(location, 3, GL_FLOAT, GL_FALSE, 0, NULL);
 
 	e.scale = 1;
 	e.rotate.x = 0;
@@ -255,8 +249,6 @@ float skyboxVertices[] = {
 	glUseProgram(shader->m_program_id);	
 	glBindVertexArray(vao);
 
-	
-
 	GLint loc_mv = glGetUniformLocation(shader->m_program_id, "Model_mat");
 	if (loc_mv != -1)
 		glUniformMatrix4fv(loc_mv,  1, GL_FALSE, model_view_mat.as_mat);
@@ -284,12 +276,13 @@ float skyboxVertices[] = {
 	if (loc_proj_s != -1)
 		glUniformMatrix4fv(loc_proj_s, 1, GL_FALSE, proj_mat.as_mat);
 
-//	glEnable(GL_DEPTH_TEST);
+	//	glEnable(GL_DEPTH_TEST);
 	//  glClearColor(0.5,0,0.5,0.0);
 
 	while (!terminer)
 	{
-		while (SDL_PollEvent(&event)) {
+		while (SDL_PollEvent(&event))
+		{
 			if (event.type == SDL_KEYDOWN)
 				ft_keys_down(&e, event);
 			if (event.type == SDL_KEYUP)
@@ -318,8 +311,7 @@ float skyboxVertices[] = {
 		glUniformMatrix4fv(loc_view, 1, GL_FALSE, view_mat.as_mat);
 		glUniformMatrix4fv(loc_proj, 1, GL_FALSE, proj_mat.as_mat);
 		glDrawArrays(GL_TRIANGLES, 0, 108);
-		
-		
+
 		glUseProgram(shader_skybox->m_program_id);
 		glBindVertexArray(vao_skybox);
 		

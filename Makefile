@@ -6,7 +6,7 @@
 #    By: ldedier <ldedier@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/11/06 18:20:16 by ldedier           #+#    #+#              #
-#    Updated: 2018/04/10 01:41:21 by ldedier          ###   ########.fr        #
+#    Updated: 2018/04/21 16:28:59 by ldedier          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -74,7 +74,7 @@ $(BINDIR)/$(NAME): $(OBJECTS)
 	@make -C $(LIBFTDIR)
 	@make -C $(LIBMATDIR)
 	@$(CC) -o $@ $^ -F ./frameworks -framework SDL2\
-		-framework SDL2_image -framework SDL2_mixer -framework SDL2_ttf -framework OpenGL -framework Appkit -L $(LIBFTDIR) -lft -L $(LIBMATDIR) -lmat
+		-framework SDL2_image -framework SDL2_mixer -framework SDL2_ttf -framework OpenGL -framework Appkit -L $(LIBFTDIR) -lft -L $(LIBMATDIR) -lmat -fsanitize=address
 	@echo "$(OK_COLOR)$(NAME) linked with success !$(EOC)"
 	@install_name_tool -change @rpath/SDL2.framework/Versions/A/SDL2 $(SDL2) $(NAME)
 	@install_name_tool -change @rpath/SDL2_image.framework/Versions/A/SDL2_image $(SDL2_image) $(NAME)
