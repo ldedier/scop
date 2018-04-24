@@ -6,7 +6,7 @@
 /*   By: ldedier <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/25 18:54:52 by ldedier           #+#    #+#             */
-/*   Updated: 2018/04/21 16:53:35 by ldedier          ###   ########.fr       */
+/*   Updated: 2018/04/24 17:51:51 by ldedier          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@
 //# include "mlx_new_window.h"
 # include "libft.h"
 # include "libmat.h"
+# include "obj.h"
 
 typedef struct	s_keys
 {
@@ -55,8 +56,8 @@ typedef struct	s_keys
 
 typedef struct	s_mmap
 {
-	void		*ptr;
-	size_t		size;
+	unsigned char	*ptr;
+	size_t			size;
 }				t_mmap;
 
 typedef struct	s_shader
@@ -67,6 +68,7 @@ typedef struct	s_shader
 	char		*m_vertex_source;
 	char		*m_fragment_source;
 }				t_shader;
+
 
 typedef struct		 s_sdl
 {
@@ -87,6 +89,16 @@ typedef struct	s_env
 	t_sdl		sdl;
 }				t_env;
 
+typedef struct	s_bmp_parser
+{
+	unsigned char	*pixels;
+	int				width;
+	int				height;
+	int				bitmap_index;
+	int				gl_mode;
+	short			bpp;
+}					t_bmp_parser;
+
 
 t_shader		*shd_new_shader(char *vertex_source, char *fragment_source);
 int				shd_charge(t_shader *shader);
@@ -98,4 +110,6 @@ void			ft_mouse_motion(t_env *e, SDL_Event ev);
 void			ft_process(t_env *e);
 int				ft_init(t_env *e);
 void			ft_quit(t_env *e);
+t_mmap			ft_map_file(char *filename);
+t_bmp_parser	ft_parse_bmp(char *filename);
 #endif

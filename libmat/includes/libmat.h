@@ -6,7 +6,7 @@
 /*   By: ldedier <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/27 00:16:34 by ldedier           #+#    #+#             */
-/*   Updated: 2018/04/10 01:51:36 by ldedier          ###   ########.fr       */
+/*   Updated: 2018/04/24 17:29:07 by ldedier          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,13 @@ typedef struct		s_vec3
 	float			y;
 	float			z;
 }					t_vec3;
+
+typedef struct		s_ivec3
+{
+	int				x;
+	int				y;
+	int				z;
+}					t_ivec3;
 
 typedef struct		s_vec4
 {

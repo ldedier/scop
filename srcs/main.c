@@ -6,7 +6,7 @@
 /*   By: ldedier <ldedier@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/25 18:53:22 by ldedier           #+#    #+#             */
-/*   Updated: 2018/04/21 17:19:51 by ldedier          ###   ########.fr       */
+/*   Updated: 2018/04/24 17:32:59 by ldedier          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,7 +112,6 @@ int		main(int argc, char **argv)
 	location = glGetAttribLocation(shader->m_program_id, "in_Colors");
 	glVertexAttribPointer(location, 3, GL_FLOAT, GL_FALSE, 0, NULL);
 
-
 float skyboxVertices[] = {
     // positions          
     -1000.0f,  1000.0f, -1000.0f,
@@ -173,31 +172,72 @@ float skyboxVertices[] = {
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 
-	unsigned char data[14];
-	
+//	unsigned char *map;
+//	map = ft_parse_bmp(PATH"/resources/skybox_textures/center.bmp");
+
+
+//	int ok;
+//	ok = 0;
+//	while(ok < 1024)
+//	{
+//		ft_printf("%d, %d, %d, %d\n", map[ok], map[ok + 1], map[ok + 2], map[ok + 3]);
+///		ok += 4;
+//	}
+//	printf("%d", map[ok + 10]);
+
+	t_obj_parser parser_o;
+
+	parser_o = ft_parse_obj(PATH"/resources/objs/42.obj");
+
+	t_bmp_parser parser;
+
+	glBindTexture(GL_TEXTURE_2D,0);	
 	int i;
 	i = 0;
 	while (i < 6)
 	{
-		data[0] =255;
-		data[1] =0;
-		data[2] =255;
-
-		data[3] =255;
-		data[4] =255;
-		data[5] =255;
-	
-//PADDING MDRR
 		
-		data[8] = 0;
-		data[9] =255;
-		data[10] =255;
+		if (i == 0)
+			parser = ft_parse_bmp(PATH"/resources/skybox_textures/left.bmp");
+		else if (i == 1)
+			parser = ft_parse_bmp(PATH"/resources/skybox_textures/right.bmp");
+		else if (i == 2)
+			parser = ft_parse_bmp(PATH"/resources/skybox_textures/top.bmp");
+		else if (i == 3)
+			parser = ft_parse_bmp(PATH"/resources/skybox_textures/bottom.bmp");
+		else if (i == 4)
+			parser = ft_parse_bmp(PATH"/resources/skybox_textures/center.bmp");	
+		else
+			parser = ft_parse_bmp(PATH"/resources/skybox_textures/farright.bmp");
 		
-		data[11] = 255;
-		data[12] = 255;
-		data[13] = 0;
+//		parser = ft_parse_bmp(PATH"/resources/textures_rgb/right.bmp");
 
-		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, 2, 2, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+
+/*
+	int ok;
+	ok = 0;
+	while(ok < 1024)
+	{
+		ft_printf("%d, %d, %d, %d\n", parser.pixels[ok], parser.pixels[ok + 1], parser.pixels[ok + 2], parser.pixels[ok + 3]);
+		ok += 4;
+	}
+*/
+
+		/*
+		if (i == 0)
+			map = ft_parse_bmp(PATH"/resources/skybox_textures/right.bmp");
+		else if (i == 1)
+			map = ft_parse_bmp(PATH"/resources/skybox_textures/left.bmp");
+		else if (i == 2)
+			map = ft_parse_bmp(PATH"/resources/skybox_textures/bottom.bmp");
+		else if (i == 3)
+			map = ft_parse_bmp(PATH"/resources/skybox_textures/top.bmp");
+		else if (i == 4)
+			map = ft_parse_bmp(PATH"/resources/skybox_textures/center.bmp");	
+		else
+			map = ft_parse_bmp(PATH"/resources/skybox_textures/farright.bmp");
+		*/
+		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, parser.gl_mode, 1024, 1024, 0, parser.gl_mode, GL_UNSIGNED_BYTE, parser.pixels);
 		i++;
 	}
 	GLuint vbo_skybox[1];

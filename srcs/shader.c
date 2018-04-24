@@ -6,7 +6,7 @@
 /*   By: ldedier <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/26 14:35:16 by ldedier           #+#    #+#             */
-/*   Updated: 2018/04/21 16:56:07 by ldedier          ###   ########.fr       */
+/*   Updated: 2018/04/22 16:06:42 by ldedier          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,7 +125,7 @@ int     shd_compile(GLuint *shader_id, GLenum type, char *filename)
 	const GLchar* chaineCodeSource;
 
 	map = ft_map_file(filename);
-	chaineCodeSource = map.ptr;
+	chaineCodeSource = (char *)map.ptr;
 	ft_putendl(chaineCodeSource);
 	if (!chaineCodeSource)
 		return 0;

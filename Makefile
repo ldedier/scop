@@ -6,7 +6,7 @@
 #    By: ldedier <ldedier@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/11/06 18:20:16 by ldedier           #+#    #+#              #
-#    Updated: 2018/04/21 16:28:59 by ldedier          ###   ########.fr        #
+#    Updated: 2018/04/24 18:46:55 by ldedier          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -38,7 +38,9 @@ LIBMAT_INCLUDEDIR = includes
 OK_COLOR = \x1b[32;01m
 EOC = \033[0m
 
-SRCS_NO_PREFIX = main.c ft_events.c ft_init.c ft_quit.c shader.c
+SRCS_NO_PREFIX = main.c ft_events.c ft_init.c ft_quit.c shader.c ft_parse_bmp.c ft_parse_obj.c\
+				 ft_parse_obj_vertices.c  ft_parse_obj_faces.c
+
 
 INCLUDES_NO_PREFIX = scop.h
 

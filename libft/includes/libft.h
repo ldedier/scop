@@ -6,7 +6,7 @@
 /*   By: ldedier <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/06 18:21:30 by ldedier           #+#    #+#             */
-/*   Updated: 2018/03/31 15:22:40 by ldedier          ###   ########.fr       */
+/*   Updated: 2018/04/24 16:50:00 by ldedier          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,5 +110,6 @@ double				ft_fmax(double a, double b);
 int					ft_splitlen(char **split);
 int					ft_clamp(int min, int val, int max);
 float				ft_fclamp(float min, float val, float max);
+float				ft_atof(char const *s);
 t_list				*ft_lstnew_ptr(void const *content, size_t content_size);
 #endif
