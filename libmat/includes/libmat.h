@@ -6,7 +6,7 @@
 /*   By: ldedier <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/27 00:16:34 by ldedier           #+#    #+#             */
-/*   Updated: 2018/04/24 17:29:07 by ldedier          ###   ########.fr       */
+/*   Updated: 2018/04/30 00:38:27 by ldedier          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,4 +104,5 @@ t_mat4				ft_mat4_model_view_matrix_vec(t_vec3 translate, t_vec3 scale, t_vec3 r
 t_mat4				ft_mat4_model_view_matrix_mat(t_mat4 translate, t_mat4 scale, t_mat4 rotate);
 void				ft_print_mat4(t_mat4 mat);
 void				ft_print_vec3(t_vec3 vec);
+void				ft_print_ivec3(t_ivec3 ivec);
 #endif

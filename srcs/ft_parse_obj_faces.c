@@ -6,7 +6,7 @@
 /*   By: ldedier <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/24 18:45:42 by ldedier           #+#    #+#             */
-/*   Updated: 2018/04/25 01:13:53 by ldedier          ###   ########.fr       */
+/*   Updated: 2018/04/30 02:55:01 by ldedier          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ void	ft_obj_hashtag(int *i, char *s, t_obj_parser *parser)
 void	ft_obj_add_index(int *i, char *s , int *index)
 {
 	*index = 0;
-	while (!ft_isdigit(s[*i]))
+	while (!ft_isdigit(s[*i]) && s[*i] != '\n' && s[*i] != '\0')
 		*i += 1;
 	while (ft_isdigit(s[*i]))
 	{
@@ -46,11 +46,6 @@ int	ft_obj_add_index_fourth(int *i, char *s , int *index)
 	return (1);
 }
 
-void	ft_print_ivec3(t_ivec3 vec)
-{
-	printf("%d, %d, %d\n", vec.x, vec.y)
-}
-
 void	ft_obj_face(int *i, char *s, t_obj_parser *parser)
 {
 	t_ivec3 *face;
@@ -59,19 +54,19 @@ void	ft_obj_face(int *i, char *s, t_obj_parser *parser)
 	ft_obj_add_index(i, s, &(tmp.x));
 	ft_obj_add_index(i, s, &(tmp.y));
 	ft_obj_add_index(i, s, &(tmp.z));
-	
+
 	face = (t_ivec3 *)(malloc(sizeof(t_ivec3)));
 	*face = tmp;
-	ft_lstpushback(&(parser->vertices_tmp), ft_lstnew(face, sizeof(t_ivec3)));
+	ft_lstpushback(&(parser->faces_tmp), ft_lstnew(face, sizeof(t_ivec3)));
+	parser->nb_faces++;
 	free(face);
 	face = (t_ivec3 *)(malloc(sizeof(t_ivec3)));
-	tmp.x = tmp.y;
 	tmp.y = tmp.z;
 	if (ft_obj_add_index_fourth(i, s, &(tmp.z)))
 	{
 		*face = tmp;
-		
-		ft_lstpushback(&(parser->vertices_tmp), ft_lstnew_ptr(face, sizeof(t_ivec3)));
+		ft_lstpushback(&(parser->faces_tmp), ft_lstnew_ptr(face, sizeof(t_ivec3)));
+		parser->nb_faces++;
 	}
 	while (s[*i] != '\0' && s[*i] != '\n')
 		*i += 1;

@@ -6,7 +6,7 @@
 /*   By: ldedier <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/24 17:50:55 by ldedier           #+#    #+#             */
-/*   Updated: 2018/04/24 18:51:53 by ldedier          ###   ########.fr       */
+/*   Updated: 2018/04/30 02:26:13 by ldedier          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,10 @@ typedef struct		s_obj_parser
 	t_list			*faces_tmp;
 	t_vec3			*vertices;
 	t_ivec3			*faces;
+	float			*draw_array;
 	int				i;
+	int				nb_vertices;
+	int				nb_faces;
 }					t_obj_parser;
 
 typedef	void		(*t_obj_func)(int *, char *, t_obj_parser *);
@@ -51,4 +54,5 @@ t_obj_parser	ft_parse_obj(char *filename);
 void			ft_obj_face(int *i,  char *s, t_obj_parser *parser);
 void			ft_obj_vertex(int *i,  char *s, t_obj_parser *parser);
 void			ft_obj_hashtag(int *i,  char *s, t_obj_parser *parser);
+void			ft_print_draw_array(t_obj_parser parser);
 #endif

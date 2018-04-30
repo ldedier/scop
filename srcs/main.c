@@ -6,7 +6,7 @@
 /*   By: ldedier <ldedier@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/25 18:53:22 by ldedier           #+#    #+#             */
-/*   Updated: 2018/04/24 17:32:59 by ldedier          ###   ########.fr       */
+/*   Updated: 2018/04/30 02:58:54 by ldedier          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,7 @@ int		main(int argc, char **argv)
 		ft_printf("shader pas bon\n");
 		return (1);
 	}
+	/*
 	float vertices[] = {
 		-1.0, -1.0, -1.0,   1.0, -1.0, -1.0,   1.0, 1.0, -1.0,     // Face 1
 		-1.0, -1.0, -1.0,   -1.0, 1.0, -1.0,   1.0, 1.0, -1.0,     // Face 1
@@ -84,15 +85,16 @@ int		main(int argc, char **argv)
 
 		1.0, 0.0, 1.0,   1.0, 0.0, 1.0,   1.0, 0.0, 1.0,           // Face 6
 		1.0, 0.0, 1.0,   1.0, 0.0, 1.0,   1.0, 0.0, 1.0};          // Face 6
-
+*/
 /*
 	float colors[] = {
 		1.0, 0.0, 0.0,
 		0.0, 1.0, 0.0,
 		0.0, 0.0, 1.0
 	};
-*/
-	GLuint vao = 0;
+
+*/	
+/*	GLuint vao = 0;
 	glGenVertexArrays(1, &vao);
 	glBindVertexArray(vao);
 	
@@ -111,7 +113,7 @@ int		main(int argc, char **argv)
 	glBufferData(GL_ARRAY_BUFFER, 108 * sizeof(float), colors, GL_STATIC_DRAW);
 	location = glGetAttribLocation(shader->m_program_id, "in_Colors");
 	glVertexAttribPointer(location, 3, GL_FLOAT, GL_FALSE, 0, NULL);
-
+*/
 float skyboxVertices[] = {
     // positions          
     -1000.0f,  1000.0f, -1000.0f,
@@ -172,22 +174,6 @@ float skyboxVertices[] = {
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 
-//	unsigned char *map;
-//	map = ft_parse_bmp(PATH"/resources/skybox_textures/center.bmp");
-
-
-//	int ok;
-//	ok = 0;
-//	while(ok < 1024)
-//	{
-//		ft_printf("%d, %d, %d, %d\n", map[ok], map[ok + 1], map[ok + 2], map[ok + 3]);
-///		ok += 4;
-//	}
-//	printf("%d", map[ok + 10]);
-
-	t_obj_parser parser_o;
-
-	parser_o = ft_parse_obj(PATH"/resources/objs/42.obj");
 
 	t_bmp_parser parser;
 
@@ -210,44 +196,57 @@ float skyboxVertices[] = {
 		else
 			parser = ft_parse_bmp(PATH"/resources/skybox_textures/farright.bmp");
 		
-//		parser = ft_parse_bmp(PATH"/resources/textures_rgb/right.bmp");
-
-
-/*
-	int ok;
-	ok = 0;
-	while(ok < 1024)
-	{
-		ft_printf("%d, %d, %d, %d\n", parser.pixels[ok], parser.pixels[ok + 1], parser.pixels[ok + 2], parser.pixels[ok + 3]);
-		ok += 4;
-	}
-*/
-
-		/*
-		if (i == 0)
-			map = ft_parse_bmp(PATH"/resources/skybox_textures/right.bmp");
-		else if (i == 1)
-			map = ft_parse_bmp(PATH"/resources/skybox_textures/left.bmp");
-		else if (i == 2)
-			map = ft_parse_bmp(PATH"/resources/skybox_textures/bottom.bmp");
-		else if (i == 3)
-			map = ft_parse_bmp(PATH"/resources/skybox_textures/top.bmp");
-		else if (i == 4)
-			map = ft_parse_bmp(PATH"/resources/skybox_textures/center.bmp");	
-		else
-			map = ft_parse_bmp(PATH"/resources/skybox_textures/farright.bmp");
-		*/
 		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, parser.gl_mode, 1024, 1024, 0, parser.gl_mode, GL_UNSIGNED_BYTE, parser.pixels);
 		i++;
 	}
 	GLuint vbo_skybox[1];
 	glGenBuffers(2, vbo_skybox);
-	
+	GLint location;
 	glEnableVertexAttribArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo_skybox[0]);
 	glBufferData(GL_ARRAY_BUFFER, 108 * sizeof(float), skyboxVertices, GL_STATIC_DRAW);
 	location = glGetAttribLocation(shader_skybox->m_program_id, "in_Vertex_skybox");
 	glVertexAttribPointer(location, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+
+
+
+
+
+	t_obj_parser parser_o;
+
+	parser_o = ft_parse_obj(PATH"/resources/objs/teapot2.obj");
+
+	GLuint vao = 0;
+	glGenVertexArrays(1, &vao);
+	glBindVertexArray(vao);
+	
+	GLuint vbo[2];
+	glGenBuffers(2, vbo);
+
+
+	float	*colors_42 = malloc(sizeof(float) * 9 * parser_o.nb_faces);
+	int k = 0;
+
+	ft_print_draw_array(parser_o);
+
+	while (k < parser_o.nb_faces * 9)
+	{
+		colors_42[k] = 0.0;
+		k++;
+	}
+	glEnableVertexAttribArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
+	glBufferData(GL_ARRAY_BUFFER, parser_o.nb_faces * 9 * sizeof(float), parser_o.draw_array, GL_STATIC_DRAW);
+	location = glGetAttribLocation(shader->m_program_id, "in_Vertex");
+	glVertexAttribPointer(location, 3, GL_FLOAT, GL_FALSE, 0, NULL);	
+
+	glEnableVertexAttribArray(1);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
+	glBufferData(GL_ARRAY_BUFFER, parser_o.nb_faces * 9 * sizeof(float), colors_42, GL_STATIC_DRAW);
+	location = glGetAttribLocation(shader->m_program_id, "in_Colors");
+	glVertexAttribPointer(location, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+
+
 
 
 	e.scale = 1;
@@ -350,11 +349,11 @@ float skyboxVertices[] = {
 		glUniformMatrix4fv(loc_mv, 1, GL_FALSE, model_view_mat.as_mat);
 		glUniformMatrix4fv(loc_view, 1, GL_FALSE, view_mat.as_mat);
 		glUniformMatrix4fv(loc_proj, 1, GL_FALSE, proj_mat.as_mat);
-		glDrawArrays(GL_TRIANGLES, 0, 108);
+		glDrawArrays(GL_TRIANGLES, 0, parser_o.nb_faces * 9);
 
 		glUseProgram(shader_skybox->m_program_id);
 		glBindVertexArray(vao_skybox);
-		
+	
 		glUniformMatrix4fv(loc_tr_s, 1, GL_FALSE, ft_mat4_translate(e.camera.position.x,e.camera.position.y,e.camera.position.z).as_mat);
 		glUniformMatrix4fv(loc_view_s, 1, GL_FALSE, view_mat.as_mat);
 		glUniformMatrix4fv(loc_proj_s, 1, GL_FALSE, proj_mat.as_mat);

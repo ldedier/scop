@@ -6,7 +6,7 @@
 /*   By: ldedier <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/24 18:47:24 by ldedier           #+#    #+#             */
-/*   Updated: 2018/04/24 20:21:08 by ldedier          ###   ########.fr       */
+/*   Updated: 2018/04/30 01:53:56 by ldedier          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,4 +75,5 @@ void	ft_obj_vertex(int *i, char *s, t_obj_parser *parser)
 	while (s[*i] != '\0' && s[*i] != '\n')
 		*i += 1;
 	ft_lstpushback(&(parser->vertices_tmp), ft_lstnew_ptr(vertex, sizeof(t_vec3)));
+	parser->nb_vertices++;
 }
